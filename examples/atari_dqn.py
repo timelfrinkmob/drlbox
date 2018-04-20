@@ -88,9 +88,9 @@ if __name__ == '__main__':
         verbose=True,
         dqn_double = False,
         noisynet='fg',
-        num_parallel = 1,
+        num_parallel = 2,
         replay_type = 'uniform',
-        replay_kwargs = dict(len = 1000000)
+        replay_kwargs = dict(maxlen = 1000000)
 
         )
     trainer.run()
