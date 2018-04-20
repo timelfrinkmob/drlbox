@@ -92,7 +92,7 @@ ACER on Breakout-v0
 if __name__ == '__main__':
     trainer = make_trainer('dqn',
         env_maker=lambda: make_env('Breakout-v0'),
-        feature_maker= make_feature,
+        feature_maker= lambda env: make_feature(env),
         state_to_input=state_to_input,
         num_parallel=1,
         train_steps=1000,
