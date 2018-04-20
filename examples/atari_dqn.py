@@ -57,7 +57,7 @@ def make_model(env):
     logits = layers.Dense(size_logits, kernel_initializer=logits_init)(feature)
     value = layers.Dense(size_value)(feature)
 
-    return models.Model(inputs=ph_state, outputs=value)
+    return models.Model(inputs=ph_state, outputs=[logits, value])
 
 
 '''
