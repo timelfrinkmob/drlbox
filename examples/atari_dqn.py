@@ -51,12 +51,13 @@ def make_model(env):
     feature = layers.Dense(512)(conv_flat)
     feature = layers.Activation('relu')(feature)
 
-    size_value = env.action_space.n
+    # actor (policy) and critic (value) streams
+    size_logits = size_value = env.action_space.n
+    logits_init = initializers.RandomNormal(stddev=1e-3)
+    logits = layers.Dense(size_logits, kernel_initializer=logits_init)(feature)
+    value = layers.Dense(size_value)(feature)
 
-    out = layers.Dense(size_value)(feature)
-    out = layers.Activation('linear')(out)
-
-    return models.Model(inputs=ph_state, outputs=out)
+    return models.Model(inputs=ph_state, outputs=value)
 
 
 '''
