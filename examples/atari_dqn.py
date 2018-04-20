@@ -56,7 +56,7 @@ def make_model(env):
     out = layers.Dense(size_value)(feature)
     out = layers.Activation('linear')(out)
 
-    return models.Model(inputs=ph_state, outputs=out)
+    return models.Model(inputs=ph_state, outputs=[out])
 
 
 '''
