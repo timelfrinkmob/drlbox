@@ -56,6 +56,35 @@ def make_model(env):
     value = layers.Dense(size_value)(feature)
     return models.Model(inputs=ph_state, outputs=value)
 
+'''
+Input arguments:
+    observation_space: Observation space of the environment;
+    num_hid_list:      List of hidden unit numbers in the fully-connected net.
+'''
+def make_feature(env):
+    num_frames = len(env.observation_space.spaces)
+    height, width = env.observation_space.spaces[0].shape
+    input_shape = height, width, num_frames
+
+    # input state
+    ph_state = layers.Input(shape=input_shape)
+
+    # convolutional layers
+    conv1 = layers.Conv2D(32, (8, 8), strides=(4, 4))(ph_state)
+    conv1 = layers.Activation('relu')(conv1)
+    conv2 = layers.Conv2D(64, (4, 4), strides=(2, 2))(conv1)
+    conv2 = layers.Activation('relu')(conv2)
+    conv3 = layers.Conv2D(64, (3, 3), strides=(1, 1))(conv2)
+    conv3 = layers.Activation('relu')(conv3)
+    conv_flat = layers.Flatten()(conv3)
+    feature = layers.Dense(512)(conv_flat)
+    feature = layers.Activation('relu')(feature)
+
+    size_value = env.action_space.n
+    value = layers.Dense(size_value)(feature)
+    value = layers.Activation('linear')(value)
+
+    return ph_state, value
 
 '''
 ACER on Breakout-v0
@@ -63,7 +92,7 @@ ACER on Breakout-v0
 if __name__ == '__main__':
     trainer = make_trainer('dqn',
         env_maker=lambda: make_env('Breakout-v0'),
-        model_maker=make_model,
+        feature_maker= make_feature,
         state_to_input=state_to_input,
         num_parallel=1,
         train_steps=1000,
