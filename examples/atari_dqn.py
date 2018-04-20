@@ -2,7 +2,7 @@
 import gym
 import numpy as np
 import atari_wrappers as aw
-from tensorflow.python.keras import layers, initializers, models,
+from tensorflow.python.keras import layers, initializers, models
 from drlbox.trainer import make_trainer
 
 
