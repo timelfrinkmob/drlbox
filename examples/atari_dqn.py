@@ -36,23 +36,27 @@ def make_model(env):
     num_frames = len(env.observation_space.spaces)
     height, width = env.observation_space.spaces[0].shape
     input_shape = height, width, num_frames
-    model = models.Sequential()
 
-    model.layers.Input(shape=input_shape)
-    model.add(layers.Conv2D(32, 8, 8, subsample=(4, 4)))
-    model.add(layers.Activation('relu'))
-    model.add(layers.Conv2D(64, 4, 4, subsample=(2, 2)))
-    model.add(layers.Activation('relu'))
-    model.add(layers.Conv2D(64, 3, 3, subsample=(1, 1)))
-    model.add(layers.Activation('relu'))
-    model.add(layers.Flatten())
-    model.add(layers.Dense(512))
-    model.add(layers.Activation('relu'))
-    model.add(layers.Dense(env.action_space.n))
-    model.add(layers.Activation('linear'))
-    print(model.summary())
+    # input state
+    ph_state = layers.Input(shape=input_shape)
 
-    return model
+    # convolutional layers
+    conv1 = layers.Conv2D(32, (8, 8), strides=(4, 4))(ph_state)
+    conv1 = layers.Activation('relu')(conv1)
+    conv2 = layers.Conv2D(64, (4, 4), strides=(2, 2))(conv1)
+    conv2 = layers.Activation('relu')(conv2)
+    conv3 = layers.Conv2D(64, (3, 3), strides=(1, 1))(conv2)
+    conv3 = layers.Activation('relu')(conv3)
+    conv_flat = layers.Flatten()(conv3)
+    feature = layers.Dense(512)(conv_flat)
+    feature = layers.Activation('relu')(feature)
+
+    size_value = env.action_space.n
+
+    out = layers.Dense(size_value)(feature)
+    out = layers.Activation('linear')(out)
+
+    return models.Model(inputs=ph_state, outputs=out)
 
 
 '''
