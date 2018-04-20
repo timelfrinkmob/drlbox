@@ -53,23 +53,20 @@ def make_model(env):
 
     # actor (policy) and critic (value) streams
     size_logits = size_value = env.action_space.n
-    logits_init = initializers.RandomNormal(stddev=1e-3)
-    logits = layers.Dense(size_logits, kernel_initializer=logits_init)(feature)
     value = layers.Dense(size_value)(feature)
-
-    return models.Model(inputs=ph_state, outputs=[logits, value])
+    return models.Model(inputs=ph_state, outputs=value)
 
 
 '''
-DQN on Breakout-v0
+ACER on Breakout-v0
 '''
 if __name__ == '__main__':
     trainer = make_trainer('dqn',
-        env_maker=lambda: make_env('Pong-v0'),
+        env_maker=lambda: make_env('Breakout-v0'),
         model_maker=make_model,
         state_to_input=state_to_input,
         num_parallel=1,
-        train_steps=1000000,
+        train_steps=1000,
         rollout_maxlen=4,
         batch_size=8,
         verbose=True,
