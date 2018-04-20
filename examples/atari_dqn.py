@@ -4,6 +4,7 @@ import numpy as np
 import atari_wrappers as aw
 from tensorflow.python.keras import layers, initializers, models
 from drlbox.trainer import make_trainer
+import argparse
 
 
 '''
@@ -64,14 +65,26 @@ def make_model(env):
 DQN on Breakout-v0
 '''
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--envname', type=str, default='Pong-v0')
+    parser.add_argument('--nbsteps', default=1750000)
+    parser.add_argument('--exp', choices=['eps', 'bq', 'bgq', 'leps', 'noisy'], default='eps')
+    args = parser.parse_args()
+
+    ENV_NAME = args.envname
+    POL = args.exp
+    nb_steps = args.nbsteps
+
+
     trainer = make_trainer('dqn',
-        env_maker=lambda: make_env('Breakout-v0'),
+        env_maker=lambda: make_env(ENV_NAME),
         model_maker=make_model,
         state_to_input=state_to_input,
-        train_steps=1000000,
+        train_steps=nb_steps,
         rollout_maxlen=4,
         batch_size=8,
         verbose=True,
+        dqn_double = False
         )
     trainer.run()
 
