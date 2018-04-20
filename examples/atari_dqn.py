@@ -4,6 +4,7 @@ import numpy as np
 import atari_wrappers as aw
 from tensorflow.python.keras import layers, initializers, models
 from drlbox.trainer import make_trainer
+from drlbox.layer.noisy_dense import NoisyDense, NoisyDenseFG
 import argparse
 
 
@@ -54,7 +55,8 @@ def make_model(env):
 
     # actor (policy) and critic (value) streams
     size_value = env.action_space.n
-    value = layers.Dense(size_value)(feature)
+
+    value = NoisyDenseFG(size_value)(feature)
     value = layers.Activation('linear')(value)
 
 
@@ -82,9 +84,14 @@ if __name__ == '__main__':
         state_to_input=state_to_input,
         train_steps=nb_steps,
         rollout_maxlen=4,
-        batch_size=8,
+        batch_size=32,
         verbose=True,
-        dqn_double = False
+        dqn_double = False,
+        noisynet='fg',
+        num_parallel = 1,
+        replay_type = 'uniform',
+        replay_kwargs = dict(len = 1000000)
+
         )
     trainer.run()
 

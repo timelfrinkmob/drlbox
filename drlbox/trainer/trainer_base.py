@@ -277,7 +277,10 @@ class Trainer(Tasker):
                         state = env.reset()
                         if rlist_step < self.rollout_maxlen - 1:
                             rlist.append(Rollout(state))
+                        self.print('Time:', time.time())
                         self.print('episode reward {:5.2f}'.format(ep_reward))
+                        self.print('Step: ', step)
+
                         ep_reward = 0.0
                     if len(rlist[-1]) >= self.rollout_maxlen:
                         if rlist_step < self.rollout_maxlen - 1:
